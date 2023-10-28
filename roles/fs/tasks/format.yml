@@ -1,0 +1,29 @@
+# LUKS > LVM > EXT4
+- name: Create ext4 filesystems on LVs
+  community.general.filesystem:
+    dev: /dev/mapper/VG-{{ item.name }}
+    fstype: ext4
+  loop: '{{ fs_lvm_lvs }}'
+  loop_control:
+    label: '{{ item.name }}'
+  when: fs_luks_container is defined and fs_lvm_lvs is defined
+
+# LUKS > EXT4
+- name: Create ext4 filesystems on root partition
+  community.general.filesystem:
+    dev: /dev/mapper/rootLUKS
+    fstype: ext4
+  when: fs_luks_container is defined and fs_lvm_lvs is not defined
+
+# EXT4
+- name: Create ext4 filesystems on root partition
+  community.general.filesystem:
+    dev: '{{ fs_partition_root }}'
+    fstype: ext4
+  when: fs_luks_container is not defined and fs_lvm_lvs is not defined
+
+- name: Create fat32 filesystem on boot partition
+  community.general.filesystem:
+    dev: '{{ fs_partition_boot }}'
+    fstype: vfat
+    opts: -F32

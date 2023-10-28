@@ -1,0 +1,9 @@
+[Trigger]
+Operation = Upgrade
+Type = Package
+Target = linux-lts
+
+[Action]
+Description = Install the kernel.
+When = PostTransaction
+Exec = /usr/local/bin/update-systemd-boot

@@ -1,0 +1,14 @@
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - |
+      # packer build
+      packer init libvirt.pkr.hcl
+      packer build libvirt.pkr.hcl
+
+      # publish manifest
+      MANIFEST_FILE_PATH=${CI_API_V4_URL}/projects/$CI_PROJECT_ID/packages/generic/archlinux/latest/manifest.json
+      curl -H "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file manifest.json "$MANIFEST_FILE_PATH"

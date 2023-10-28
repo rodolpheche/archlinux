@@ -1,0 +1,13 @@
+title      Arch Linux
+version    {{ linux_version.stdout }}
+machine-id {{ ansible_machine_id }}
+sort-key   arch
+{% if fs_lvm_lvs is defined and fs_luks_container is defined %}
+options    root=/dev/mapper/VG-rootLV cryptdevice={{ fs_partition_root }}:rootLUKS:allow-discards rw
+{% elif fs_lvm_lvs is not defined and fs_luks_container is defined %}
+options    root=/dev/mapper/rootLUKS cryptdevice={{ fs_partition_root }}:rootLUKS:allow-discards rw
+{% else %}
+options    root={{ fs_partition_root }} rw
+{% endif %}
+linux      /{{ ansible_machine_id }}/{{ linux_version.stdout }}/linux
+initrd     /{{ ansible_machine_id }}/{{ linux_version.stdout }}/initrd

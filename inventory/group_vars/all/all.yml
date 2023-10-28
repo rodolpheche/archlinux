@@ -1,0 +1,7 @@
+# LUKS container passphrase
+fs_luks_passphrase: username
+
+# Default user
+user_username: username
+user_password: password
+# user_ssh_public_key: ssh-rsa XXXXXXXXXXXX ...

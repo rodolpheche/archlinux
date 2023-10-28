@@ -1,0 +1,34 @@
+fs_device: /dev/sda
+fs_partition_boot: /dev/sda1
+fs_partition_root: /dev/sda2
+
+fs_luks_container:
+  name: rootLUKS
+
+fs_lvm_lvs:
+  - name: rootLV
+    size: '50G'
+    mountpoint: /
+  - name: optLV
+    size: '10G'
+    mountpoint: /opt
+    opts: 'nosuid,nodev'
+  - name: homeLV
+    size: '10G'
+    mountpoint: /home
+    opts: 'nosuid,nodev,noexec'
+  - name: varLV
+    size: '10G'
+    mountpoint: /var
+    opts: 'nosuid,nodev,noexec'
+  - name: varlogLV
+    size: '10G'
+    mountpoint: /var/log
+    opts: 'nosuid,nodev,noexec'
+  - name: vartmpLV
+    size: '10G'
+    mountpoint: /var/tmp
+    opts: 'nosuid,nodev,noexec'
+
+bootstrap_additional_packages:
+  - openssh

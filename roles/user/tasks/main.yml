@@ -1,0 +1,19 @@
+- name: Create user
+  ansible.builtin.user:
+    name: '{{ user_username }}'
+    password: "{{ '%s' | format(user_password) | password_hash('sha512') }}"
+    groups: adm,disk,wheel,audio,video,users
+    append: true
+
+- name: Copy ssh public key
+  ansible.posix.authorized_key:
+    user: '{{ user_username }}'
+    key: '{{ user_ssh_public_key }}'
+    state: present
+  when: user_ssh_public_key is defined
+
+- name: Copy sudoers conf
+  ansible.builtin.copy:
+    src: sudoers
+    dest: /etc/sudoers.d/wheel
+    mode: '0644'

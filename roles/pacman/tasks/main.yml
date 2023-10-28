@@ -1,0 +1,20 @@
+- name: Copy pacman configuration file
+  ansible.builtin.copy:
+    src: pacman.conf
+    dest: /etc/
+    mode: '0644'
+
+- name: Synchronize pacman repos
+  community.general.pacman:
+    update_cache: true
+
+- name: Install reflector
+  community.general.pacman:
+    name: reflector
+
+- name: Enable reflector systemd service
+  become: true
+  ansible.builtin.systemd:
+    name: reflector.timer
+    enabled: true
+  ignore_errors: '{{ ansible_check_mode }}'

@@ -1,0 +1,21 @@
+- name: Bootstrap
+  hosts: all
+  become: true
+  become_user: root
+  roles:
+    - fs
+    - bootstrap
+
+- name: Minimal setup
+  hosts: all
+  become: true
+  become_user: root
+  vars:
+    ansible_python_interpreter: /root/ansible-python-interpreter-chroot
+  roles:
+    - pacman
+    - kernel
+    - bootloader
+    - user
+    - network
+    - host

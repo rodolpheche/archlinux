@@ -1,0 +1,5 @@
+- name: Include bootstrap-fs.yml
+  ansible.builtin.include_tasks: bootstrap-fs.yml
+
+- name: Include ansible-python-interpreter.yml
+  ansible.builtin.include_tasks: ansible-python-interpreter.yml

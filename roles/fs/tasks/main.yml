@@ -1,0 +1,19 @@
+- name: Include parted.yml
+  ansible.builtin.include_tasks: parted.yml
+
+- name: Include luks.yml
+  ansible.builtin.include_tasks: luks.yml
+  when: fs_luks_container is defined
+
+- name: Include lvm.yml
+  ansible.builtin.include_tasks: lvm.yml
+  when: fs_lvm_lvs is defined
+
+- name: Include format.yml
+  ansible.builtin.include_tasks: format.yml
+
+- name: Include mount.yml
+  ansible.builtin.include_tasks: mount.yml
+
+- name: Include fstab.yml
+  ansible.builtin.include_tasks: fstab.yml

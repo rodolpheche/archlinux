@@ -1,0 +1,50 @@
+- name: Install lvm2
+  community.general.pacman:
+    name: lvm2
+  when: fs_lvm_lvs is defined
+
+- name: Copy mkinitcpio.conf
+  ansible.builtin.template:
+    src: mkinitcpio.conf.j2
+    dest: /etc/mkinitcpio.conf
+    mode: '0644'
+
+- name: Retrieve Linux version
+  ansible.builtin.command: ls -1 /lib/modules
+  register: linux_version
+  changed_when: false
+
+- name: Prepare kernel directory
+  ansible.builtin.file:
+    path: /boot/{{ ansible_machine_id }}
+    state: directory
+    mode: '0755'
+
+- name: Install kernel to boot
+  ansible.builtin.command: kernel-install add {{ linux_version.stdout }} /boot/vmlinuz-linux-lts
+  args:
+    creates: /boot/loader/entries/{{ ansible_machine_id }}-{{ linux_version.stdout }}.conf
+
+- name: Copy loader.conf
+  ansible.builtin.template:
+    src: entry.conf.j2
+    dest: /boot/loader/entries/{{ ansible_machine_id }}-{{ linux_version.stdout }}.conf
+    mode: '0644'
+
+- name: Create pacman hook directory
+  ansible.builtin.file:
+    path: /etc/pacman.d/hooks
+    state: directory
+    mode: '0755'
+
+- name: Copy pacman linux hook config
+  ansible.builtin.copy:
+    src: kernel.hook
+    dest: /etc/pacman.d/hooks/kernel.hook
+    mode: '0644'
+
+- name: Copy pacman linux hook script
+  ansible.builtin.copy:
+    src: update-systemd-boot
+    dest: /usr/local/bin
+    mode: '0755'

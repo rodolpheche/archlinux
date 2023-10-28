@@ -1,0 +1,11 @@
+#!/bin/sh -e
+
+if [ "$SUDO_USER" = "" ]
+then
+  cp -rf /root/.ansible /mnt/root/
+else
+  cp -rf /home/$SUDO_USER/.ansible /mnt/home/$SUDO_USER/
+fi
+
+# launch a systemd user container instead of chroot
+exec systemd-nspawn --pipe --timezone=off -D /mnt /usr/bin/python3 "$@"

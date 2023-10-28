@@ -1,0 +1,39 @@
+- name: Install systemd-resolved
+  community.general.pacman:
+    name: systemd-resolvconf
+
+- name: Link resolv on systemd stub for compatibility with traditional Linux programs
+  ansible.builtin.file:
+    src: /run/systemd/resolve/stub-resolv.conf
+    dest: /etc/resolv.conf
+    force: true
+    follow: false
+    state: link
+
+- name: Copy systemd-networkd configuration file
+  ansible.builtin.copy:
+    src: networkd.conf
+    dest: /etc/systemd/
+    mode: '0644'
+
+- name: Copy systemd-networkd configuration file for wired interfaces
+  ansible.builtin.copy:
+    src: 10-enp.network
+    dest: /etc/systemd/network/
+    mode: '0644'
+
+- name: Copy systemd-networkd configuration file for wireless interfaces
+  ansible.builtin.copy:
+    src: 20-wlan.network
+    dest: /etc/systemd/network/
+    mode: '0644'
+
+- name: Enable systemd services
+  ansible.builtin.systemd:
+    name: '{{ item }}'
+    enabled: true
+  loop:
+    - systemd-timesyncd
+    - systemd-networkd
+    - systemd-resolved
+    - sshd

@@ -1,0 +1,27 @@
+- name: Create pacman.d directory
+  ansible.builtin.file:
+    path: /mnt/etc/pacman.d
+    mode: '0755'
+    state: directory
+
+- name: Set pacman mirrors
+  ansible.builtin.command: reflector --verbose --save /mnt/etc/pacman.d/mirrorlist --latest 10 --protocol https --sort rate
+  args:
+    creates: /mnt/etc/pacman.d/mirrorlist
+
+- name: Set liveiso pacman mirrors
+  ansible.builtin.copy:
+    src: /mnt/etc/pacman.d/mirrorlist
+    dest: /etc/pacman.d/mirrorlist
+    remote_src: true
+    mode: '0644'
+
+- name: Install archlinux-keyring package
+  community.general.pacman:
+    name: archlinux-keyring
+    update_cache: true
+
+- name: Bootstrap fs
+  ansible.builtin.command: pacstrap /mnt base linux-lts linux-firmware python sudo {{ bootstrap_additional_packages | join(' ') }}
+  args:
+    creates: /mnt/etc/os-release

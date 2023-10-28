@@ -1,0 +1,37 @@
+# LUKS > LVM > EXT4
+- name: Mount lvm partitions
+  ansible.posix.mount:
+    src: /dev/mapper/VG-{{ item.name }}
+    path: /mnt{{ item.mountpoint }}
+    fstype: '{{ item.fstype | d("ext4") }}'
+    opts: '{{ item.opts | d(omit) }}'
+    state: mounted
+  loop: '{{ fs_lvm_lvs }}'
+  loop_control:
+    label: '{{ item.name }}'
+  when: fs_luks_container is defined and fs_lvm_lvs is defined
+
+# LUKS > EXT4
+- name: Mount root partition
+  ansible.posix.mount:
+    src: '/dev/mapper/rootLUKS'
+    path: /mnt
+    fstype: ext4
+    state: mounted
+  when: fs_luks_container is defined and fs_lvm_lvs is not defined
+
+# EXT4
+- name: Mount root partition
+  ansible.posix.mount:
+    src: '{{ fs_partition_root }}'
+    path: /mnt
+    fstype: ext4
+    state: mounted
+  when: fs_luks_container is not defined and fs_lvm_lvs is not defined
+
+- name: Mount boot partition
+  ansible.posix.mount:
+    src: '{{ fs_partition_boot }}'
+    path: /mnt/boot
+    fstype: vfat
+    state: mounted

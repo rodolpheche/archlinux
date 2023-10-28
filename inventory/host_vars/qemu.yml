@@ -1,0 +1,11 @@
+fs_device: /dev/vda
+fs_partition_boot: /dev/vda1
+fs_partition_root: /dev/vda2
+
+fs_luks_container:
+  name: rootLUKS
+
+fs_lvm_lvs:
+  - name: rootLV
+    size: '80%VG'
+    mountpoint: /

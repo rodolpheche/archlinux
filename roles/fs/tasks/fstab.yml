@@ -1,0 +1,10 @@
+- name: Create etc directory
+  ansible.builtin.file:
+    path: /mnt/etc
+    mode: '0755'
+    state: directory
+
+- name: Generate fstab
+  ansible.builtin.shell: genfstab -U -p /mnt > /mnt/etc/fstab
+  args:
+    creates: /mnt/etc/fstab

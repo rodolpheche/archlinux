@@ -1,0 +1,12 @@
+- name: Create the VG
+  community.general.lvg:
+    vg: VG
+    pvs: /dev/mapper/rootLUKS
+    pvresize: true
+
+- name: Create LVs
+  community.general.lvol:
+    vg: VG
+    lv: '{{ item.name }}'
+    size: '{{ item.size }}'
+  loop: '{{ fs_lvm_lvs }}'

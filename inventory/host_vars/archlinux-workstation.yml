@@ -1,0 +1,6 @@
+fs_device: /dev/nvme0n1
+fs_partition_boot: /dev/nvme0n1p1
+fs_partition_root: /dev/nvme0n1p2
+
+fs_luks_container:
+  name: rootLUKS
